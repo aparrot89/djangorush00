@@ -1,0 +1,31 @@
+{% extends "ex01/base.html"  %}
+
+{% block style%}
+{% load static %}
+	<link rel="stylesheet" href="{% static 'ex01/style2.css' %}" />
+{% endblock %}
+
+{% block title%}
+  	<title>Ex01 : Moteur de template.</title>
+{% endblock %}
+
+{% block content %}
+
+	<h1>Block</h1>
+	<p>
+	On almost all websites, a page is always composed the same way: a top of page, a menu and a footer. If you copy and paste your menu code in all your templates and one day you want to modify an element of your menu, you will have to modify all your templates! Fortunately, the block tag allows us to avoid this tricky situation. Indeed, it is possible to declare blocks, which will be defined in another template, and reusable in the current template. We can then create a file, usually called base.html, which will define the global structure of the page, in other words its skeleton.
+	</p>
+	<h1>Loop</h1>
+	<p>
+	With this template, the engine will iterate on the list (it works with any other iterable type), replace the color variable by the current iteration element and generate the code between for and endfor for each element of the list.
+	</p>
+	<h1>If</h1>
+	<p>
+	Just like in Python, it is possible to execute conditions in your template depending on the value of variables passed to the template 
+	</p>
+	<h1>Variables</h1>
+	<p>
+	You can pass variables in double {}
+	</p>
+
+{% endblock %}

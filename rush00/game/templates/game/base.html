@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+	{% block style%}
+	{% load static %}
+		<link rel="stylesheet" href="{% static 'game/style.css' %}" />
+	{% endblock %}
+
+	{% block title%}
+	{% endblock %}
+  </head>
+
+  <body>
+
+  {% block content %}
+  {% endblock %}
+
+  </body>
+</html>
