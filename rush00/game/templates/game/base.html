@@ -5,7 +5,7 @@
     <meta charset="utf-8">
 	{% block style%}
 	{% load static %}
-		<link rel="stylesheet" href="{% static 'game/style.css' %}" />
+		<link rel="stylesheet" href="{% static 'css/style.css' %}" />
 	{% endblock %}
 
 	{% block title%}
@@ -14,15 +14,15 @@
   </head>
 
   <body>
+	<img id="gameboy" alt="gameboy" src="{% static 'img/gameboy.jpg' %}" usemap="#gameboy" />
+	<img id="gray_screen" alt="gray_screen" src="{% static 'img/gray_screen.jpg' %}"/>
+	<map name="gameboy">
 
-  {% block content %}
-	{% load static %}
-	<img style="width:1000px; height:auto;" alt="image" src="{% static 'img/gameboy.jpg' %}" usemap="#coucou" />
-	<map name="coucou">
-		<area shape="rect" coords="0,0,10,10" href="{% url "coucou" %}" alt="Sun">
-
-
+  {% block map %}
+		<area shape="circle" coords="639,619,25" href="{% url "worldmap" %}" alt="A">
+		<area shape="circle" coords="576,652,25" href="{% url "load" %}" alt="B">
   {% endblock %}
+	</map>
 
   </body>
 </html>

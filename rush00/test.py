@@ -16,6 +16,12 @@ MOVIES = [
         'Freddy',
         'unbreakable',
         'pacific-rim',
+        'robot-monster',
+        'dragonball-evolution',
+        'vampire-academy',
+        'elektra',
+        'Mega Shark vs. Giant Octopus',
+        'jehrg'
 ]
 
 class Movie:
@@ -25,8 +31,12 @@ class Movie:
         self.rating = float(infos['imdbRating'])
 
     def __str__(self):
-        return self.title
-    
+        ret = ""
+        for k, v in self.__dict__.items():
+            if not(len(k) >= 4 and k[:2] == "__" and k[-2:] == "__"):
+                ret += k + ' : ' + str(v) + '\n'
+        return ret
+
 class Game:
     def __init__(self):
         self.movies = []
@@ -40,7 +50,11 @@ class Game:
             if wp_call.status_code != 200:
                 print("Erreur HTTP, code ", str(wp_call.status_code))
                 exit(1)
-            self.movies.append(Movie(wp_call.json()))
+            infos_json = wp_call.json()
+            if infos_json and 'Error' in infos_json.keys():
+                print('Error: ', infos_json['Error'])
+            else:
+                self.movies.append(Movie(infos_json))
 
     def __str__(self):
         ret = ""

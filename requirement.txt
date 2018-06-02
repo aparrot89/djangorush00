@@ -2,3 +2,4 @@ django
 psycopg2
 django-mathfilters
 requests
+omdb
