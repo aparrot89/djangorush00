@@ -9,12 +9,19 @@
 	{% endblock %}
 
 	{% block title%}
+  		<title>Gameboy</title>
 	{% endblock %}
   </head>
 
   <body>
 
   {% block content %}
+	{% load static %}
+	<img style="width:1000px; height:auto;" alt="image" src="{% static 'img/gameboy.jpg' %}" usemap="#coucou" />
+	<map name="coucou">
+		<area shape="rect" coords="0,0,10,10" href="{% url "coucou" %}" alt="Sun">
+
+
   {% endblock %}
 
   </body>
