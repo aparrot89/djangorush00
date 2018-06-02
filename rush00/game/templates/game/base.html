@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 
   <head>
     <meta charset="utf-8">
-	{% block style%}
-	{% load static %}
-		<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+	<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+	{% block lol %}
 	{% endblock %}
-
+	
 	{% block title%}
   		<title>Gameboy</title>
 	{% endblock %}
@@ -16,6 +16,7 @@
   <body>
 	<img id="gameboy" alt="gameboy" src="{% static 'img/gameboy.jpg' %}" usemap="#gameboy" />
 	<img id="gray_screen" alt="gray_screen" src="{% static 'img/gray_screen.jpg' %}"/>
+	<div class='case'></div>
 	<map name="gameboy">
 
   {% block map %}

@@ -1,6 +1,23 @@
 {% extends "game/base.html"  %}
 {% load static %}
 
+{% block lol %}
+<style>
+	 .case{
+		position: absolute;
+		left: 287px;
+		top: 52px;
+		width: 448px;
+		height: 448px;
+		background: url("{% static 'img/mario.png' %}") 1px 1px ,
+					url("{% static 'img/case.png' %}") ;
+		background-repeat: no-repeat, repeat;
+		background-size: {{ size }}px auto;
+	}
+</style>
+{% endblock %}
+
+
 {% block title%}
   	<title>Worldmap</title>
 {% endblock %}

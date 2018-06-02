@@ -4,3 +4,4 @@
 *.swp*
 *db.sqlite*
 *django_venv*
+*.pickle*

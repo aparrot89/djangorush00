@@ -1,10 +1,27 @@
 from django.shortcuts import render, HttpResponse
+from django.conf import settings
+from .game import Game
+import os, pickle
 
 def init(request):
     return render(request, 'game/base.html')
 
 def worldmap(request):
-    return render(request, 'game/worldmap.html')
+    nb_grid = 10
+    size = 450 / nb_grid
+    pickle_name = getattr(settings, "PICKLE_NAME", None)
+    if pickle_name is None:
+        pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
+    game = Game()
+    if os.path.exists(pickle_name):
+        with open(pickle_name, 'rb') as fd:
+            game_attr = pickle.load(fd)
+            game.load(game_attr)
+    else:
+        game.load_default_settings()
+
+    game.dump()
+    return render(request, 'game/worldmap.html', {'size': '45'})
 
 def load(request):
     return HttpResponse("load")

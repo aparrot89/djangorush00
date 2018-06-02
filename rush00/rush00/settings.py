@@ -124,9 +124,11 @@ STATICFILES_DIRS = (
         os.path.join(BASE_DIR, 'static'),
 )
 
+PICKLE_NAME = os.path.join(BASE_DIR, 'infos.pickle')
+
 API_KEY = '903c3efb'
 
-MOVIES = [
+MOVIEMONS = [
         'alien',
         'avatar',
         'rocky horror picture show',
@@ -139,3 +141,9 @@ MOVIES = [
         'unbreakable',
         'pacific-rim',
 ]
+
+
+MARIO_X = 0
+MARIO_Y = 0
+
+NB_MOVIEBALLS = 50
