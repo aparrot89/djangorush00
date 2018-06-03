@@ -29,22 +29,7 @@ class Game:
         self.mario_y = self.grid_size / 2
         self.nb_movieballs = 50
         self.slot = 0
-
-    def __str__(self):
-        ret = ""
-        for title, movie in self.moviemons.items():
-            ret += str(movie) + '\n'
-        return ret
-
-    def omdb_request(self):
-        API_KEY = getattr(settings, 'API_KEY', None)
-        if API_KEY is None:
-            print("Error: no API_KEY in settings.py")
-            exit(1)
-        moviemons = getattr(settings, 'MOVIEMONS', None)
-        if moviemons is None:
-            print("Error: no moviemons in settings.py")
-            exit(1)
+        self.loader = False
 
     def __str__(self):
         ret = ""
@@ -72,12 +57,12 @@ class Game:
                 print('Error: ', infos_json['Error'])
             else:
                 self.moviemons[infos_json['Title']] = Moviemon(infos_json)
-
+    """
     def dump(self, nb=-1):
         if nb == -1 :
             pickle_name = getattr(settings, "PICKLE_NAME", None)
             if pickle_name is None:
-                p
+                pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
         omdb.set_default('apikey', API_KEY)
         for movie in moviemons:
             wp_call = omdb.request(t=movie)
@@ -89,7 +74,7 @@ class Game:
                 print('Error: ', infos_json['Error'])
             else:
                 self.moviemons[infos_json['Title']] = Moviemon(infos_json)
-
+    """
     def dump(self, nb=-1):
         if nb == -1 :
             pickle_name = getattr(settings, "PICKLE_NAME", None)
@@ -108,6 +93,7 @@ class Game:
             to_dump['mario_y'] = tmp['mario_y']
             to_dump['nb_movieballs'] = tmp['nb_movieballs']
             to_dump['slot'] = tmp['slot']
+            to_dump['loader'] = tmp['loader']
             pickle.dump(to_dump, fd)
 
 
@@ -128,6 +114,10 @@ class Game:
 
     @staticmethod
     def load(pickle_name):
+        if not os.path.exists(pickle_name):
+            game = Game()
+            game.dump()
+            return game
         with open(pickle_name, 'rb') as fd:
             game_dict = pickle.load(fd)
         game = Game()
@@ -139,6 +129,7 @@ class Game:
         game.mario_y = game_dict['mario_y']
         game.nb_movieballs = game_dict['nb_movieballs']
         game.slot = game_dict['slot']
+        game.loader = game_dict['loader']
         return game
 
     @staticmethod

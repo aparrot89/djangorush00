@@ -49,11 +49,57 @@ def worldmap(request):
         game = Game.load(pickle_name)
     else:
         game = Game.load_default_settings()
+    game.slot = 0
+    game.loader = False
     game.dump()
     return render(request, 'game/worldmap.html', get_worldmap_params(game))
 
 def load(request):
-    return HttpResponse("load")
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.dump()
+    return render(request, 'game/load.html', get_load_save_params(game))
+
+def load_A(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    slots_name = ['a', 'b', 'c']
+    slot_name = slots_name[game.slot]
+    slot_name = "slot" + slot_name
+    save_dir = getattr(settings, 'SAVE_DIR', os.path.join(settings.BASE_DIR, 'saved_game'))
+    pickle_to_load = [os.path.join(save_dir, elem) for elem in os.listdir(save_dir) if os.path.isfile(os.path.join(save_dir, elem)) and slot_name in elem][0]
+    print(pickle_to_load)
+    game = Game.load(pickle_to_load)
+    game.loader = True
+    game.dump()
+    return render(request, 'game/load.html', get_load_save_params(game))
+
+def load_up(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.slot = max(game.slot - 1, 0)
+    game.dump()
+    return render(request, 'game/load.html', get_load_save_params(game))
+
+def load_down(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.slot = min(game.slot + 1, 2)
+    game.dump()
+    return render(request, 'game/load.html', get_load_save_params(game))
+
+def get_pickle_name():
+    pickle_name = getattr(settings, "PICKLE_NAME", None)
+    if pickle_name is None:
+        pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
+    return pickle_name
+
+def get_worldmap_params(game):
+    return {
+        'mario_px_x' : str(game.mario_x * game.nb_pixel),
+        'mario_px_y' : str(game.mario_y * game.nb_pixel),
+        'nb_pixel' : str(game.nb_pixel),
+    }
 
 def up(request):
     pickle_name = get_pickle_name()
@@ -68,8 +114,6 @@ def down(request):
     game.mario_y = min(game.grid_size - 1, game.mario_y + 1)
     game.dump()
     return render(request, 'game/worldmap.html', get_worldmap_params(game))
-
-    game.slot = min(game.slot + 1, )
 
 def left(request):
     pickle_name = get_pickle_name()
@@ -88,15 +132,14 @@ def right(request):
 def save(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    print(moviemon)
     game.dump()
-    return render(request, 'game/save.html', get_save_params(game.slot))
+    return render(request, 'game/save.html', get_load_save_params(game))
 
 def save_A(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.dump(game.slot)
-    return render(request, 'game/save.html', get_save_params(game.slot))
+    return render(request, 'game/save.html', get_load_save_params(game))
 
 def save_B(request):
     pickle_name = get_pickle_name()
@@ -105,19 +148,21 @@ def save_B(request):
     game.dump()
     return render(request, 'game/options.html')
 
+    #slots['pos'] = game.slot
 def save_up(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = max(game.slot - 1, 0)
     game.dump()
-    return render(request, 'game/save.html', get_save_params(game.slot))
+    return render(request, 'game/save.html', get_load_save_params(game))
 
 def save_down(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = min(game.slot + 1, 2)
     game.dump()
-    return render(request, 'game/save.html', get_save_params(game.slot))
+    return render(request, 'game/save.html', get_load_save_params(game))
+    #return slots
 
 def get_pickle_name():
     pickle_name = getattr(settings, "PICKLE_NAME", None)
@@ -132,9 +177,11 @@ def get_worldmap_params(game):
         'nb_pixel' : str(game.nb_pixel),
     }
 
-def get_save_params(slot):
-    slots_name = ['a', 'b', 'c']
+def get_load_save_params(game):
     slots = {}
+    slots['pos'] = game.slot
+    slots['loader'] = game.loader
+    slots_name = ['a', 'b', 'c']
     for slot_name in slots_name:
         slots[slot_name] = {}
     slots['a']
@@ -147,6 +194,5 @@ def get_save_params(slot):
             if 'slot' + slot_name in elem:
                 game = Game.load(elem)
                 slots[slot_name]['dex_number'] = len(game.moviedex)
-                slots[slot_name]['mons_number'] = slots['a']['dex_number'] + len(game.moviemons)
-    slots['pos'] = slot
+                slots[slot_name]['mons_number'] = slots[slot_name]['dex_number'] + len(game.moviemons)
     return slots

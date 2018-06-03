@@ -5,7 +5,10 @@ from . import views
 urlpatterns = [
     path('', views.init, name="init"),
     path('worldmap/', views.worldmap, name="worldmap"),
-    path('load/', views.load, name="load"),
+    path('options/load/', views.load, name="load"),
+    path('options/load_A/', views.load_A, name="load_A"),
+    path('options/load_up/', views.load_up, name="load_up"),
+    path('options/load_down/', views.load_down, name="load_down"),
     path('options/save/', views.save, name="save"),
     path('options/save_A/', views.save_A, name="save_A"),
     path('options/save_B/', views.save_B, name="save_B"),

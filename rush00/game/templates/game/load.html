@@ -13,7 +13,7 @@
 
 
 {% block title%}
-  	<title>Save</title>
+  	<title>Load</title>
 {% endblock %}
 
 {% block content%}
@@ -85,17 +85,37 @@
 {% endblock %}
 
 {% block control %}
-A - Save &nbsp; &nbsp; &nbsp; &nbsp; B - Cancel
+{% if loader %}
+A - Start
+{%else %}
+A - Load &nbsp; &nbsp; &nbsp; &nbsp; B - Cancel
+{% endif %}
 {% endblock %}
 
 {% block map %}
-	<area shape="circle" coords="639,619,25" href="{% url "save_A" %}" alt="A">
-	<area shape="circle" coords="576,652,25" href="{% url "save_B" %}" alt="B">
+	{% if loader %}
+		<area shape="circle" coords="639,619,25" href="{% url "worldmap" %}" alt="A">
+	{% else %}
+	{% if  a %}
+		{% ifequal pos 0 %}
+		<area shape="circle" coords="639,619,25" href="{% url "load_A" %}" alt="A">
+		{% endifequal %}
+	{% endif %}
+	{% if  b %}
+		{% ifequal pos 1 %}
+		<area shape="circle" coords="639,619,25" href="{% url "load_A" %}" alt="A">
+		{% endifequal %}
+	{% endif %}
+	{% if  c %}
+		{% ifequal pos 2 %}
+		<area shape="circle" coords="639,619,25" href="{% url "load_A" %}" alt="A">
+		{% endifequal %}
+	{% endif %}
+	<area shape="circle" coords="576,652,25" href="{% url "init" %}" alt="B">
 
-	<area shape="rect" coords="364,595,394,628" href="{% url "save_up" %}" alt="up">
-	<area shape="rect" coords="364,652,394,688" href="{% url "save_down" %}" alt="down">
+	<area shape="rect" coords="364,595,394,628" href="{% url "load_up" %}" alt="up">
+	<area shape="rect" coords="364,652,394,688" href="{% url "load_down" %}" alt="down">
+
+	{% endif %}
 
 {% endblock %}
-
-  </body>
-</html>
