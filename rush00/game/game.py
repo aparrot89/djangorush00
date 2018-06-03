@@ -1,4 +1,4 @@
-import sys, requests, json, pickle, random
+import sys, requests, json, pickle, random, os
 import omdb
 from django.conf import settings
 
@@ -45,6 +45,39 @@ class Game:
         if moviemons is None:
             print("Error: no moviemons in settings.py")
             exit(1)
+
+    def __str__(self):
+        ret = ""
+        for title, movie in self.moviemons.items():
+            ret += str(movie) + '\n'
+        return ret
+
+    def omdb_request(self):
+        API_KEY = getattr(settings, 'API_KEY', None)
+        if API_KEY is None:
+            print("Error: no API_KEY in settings.py")
+            exit(1)
+        moviemons = getattr(settings, 'MOVIEMONS', None)
+        if moviemons is None:
+            print("Error: no moviemons in settings.py")
+            exit(1)
+        omdb.set_default('apikey', API_KEY)
+        for movie in moviemons:
+            wp_call = omdb.request(t=movie)
+            if wp_call.status_code != 200:
+                print("Erreur HTTP, code ", str(wp_call.status_code))
+                exit(1)
+            infos_json = wp_call.json()
+            if infos_json and 'Error' in infos_json.keys():
+                print('Error: ', infos_json['Error'])
+            else:
+                self.moviemons[infos_json['Title']] = Moviemon(infos_json)
+
+    def dump(self, nb=-1):
+        if nb == -1 :
+            pickle_name = getattr(settings, "PICKLE_NAME", None)
+            if pickle_name is None:
+                p
         omdb.set_default('apikey', API_KEY)
         for movie in moviemons:
             wp_call = omdb.request(t=movie)
@@ -63,7 +96,7 @@ class Game:
             if pickle_name is None:
                 pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
         else:
-            picle_name = 'slot'+ str(chr(nb + 97)) + '_' + str(self.get_strength()) + '.mmg'
+            pickle_name = os.path.join(settings.SAVE_DIR, 'slot'+ str(chr(nb + 97)) + '_' + str(self.get_strength()) + '.mmg')
         with open(pickle_name, 'wb') as fd:
             tmp = self.__dict__
             to_dump = {}
@@ -74,6 +107,7 @@ class Game:
             to_dump['mario_x'] = tmp['mario_x']
             to_dump['mario_y'] = tmp['mario_y']
             to_dump['nb_movieballs'] = tmp['nb_movieballs']
+            to_dump['slot'] = tmp['slot']
             pickle.dump(to_dump, fd)
 
 
@@ -104,6 +138,7 @@ class Game:
         game.mario_x = game_dict['mario_x']
         game.mario_y = game_dict['mario_y']
         game.nb_movieballs = game_dict['nb_movieballs']
+        game.slot = game_dict['slot']
         return game
 
     @staticmethod

@@ -139,9 +139,13 @@ MOVIEMONS = [
         'pokemon',
         'batman',
         'shining',
-        'Freddy',
         'unbreakable',
         'pacific-rim',
+        'robot-monster',
+        'dragonball-evolution',
+        'vampire-academy',
+        'elektra',
+        'Mega Shark vs. Giant Octopus',
 ]
 
 GRID_SIZE = 10

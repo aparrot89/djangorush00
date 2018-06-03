@@ -19,23 +19,63 @@
 {% block content%}
 <div class='case'>
 	<ul>
-		<li>Slot A :
+		<li>
+			{% ifequal pos 0 %}
+			-> 
+			{% else %}
+				&nbsp;
+				&nbsp;
+			{% endifequal %}
+			Slot A : 
 		{% if  a %}
-			exist
+			{% for key, value in a.items %}
+				{% ifequal key 'dex_number' %}
+					{{value}} /
+				{% endifequal %}
+				{% ifequal key 'mons_number' %}
+					{{ value }}
+				{% endifequal %}
+			{% endfor %}
 		{% else %}
 			free
 		{% endif %}
-		</li>
-
-		<li>Slot B :
-		{% if  a %}
+		<li>
+			{% ifequal pos 1 %}
+			-> 
+			{% else %}
+				&nbsp;
+				&nbsp;
+			{% endifequal %}
+			Slot B : 
+		{% if  b %}
+			{% for key, value in b.items %}
+				{% ifequal key 'dex_number' %}
+					{{value}} /
+				{% endifequal %}
+				{% ifequal key 'mons_number' %}
+					{{ value }}
+				{% endifequal %}
+			{% endfor %}
 		{% else %}
 			free
 		{% endif %}
-		</li>
-
-		<li>Slot C :
-		{% if  a %}
+		<li>
+			{% ifequal pos 2 %}
+			-> 
+			{% else %}
+				&nbsp;
+				&nbsp;
+			{% endifequal %}
+			Slot C : 
+		{% if c %}
+			{% for key, value in c.items %}
+				{% ifequal key 'dex_number' %}
+					{{value}} /
+				{% endifequal %}
+				{% ifequal key 'mons_number' %}
+					{{ value }}
+				{% endifequal %}
+			{% endfor %}
 		{% else %}
 			free
 		{% endif %}

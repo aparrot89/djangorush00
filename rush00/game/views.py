@@ -4,7 +4,44 @@ from django.conf import settings
 from .game import Game
 
 def init(request):
+    pickle_name = get_pickle_name()
+    if os.path.exists(pickle_name):
+        os.remove(pickle_name)
     return render(request, 'game/base.html')
+
+def options(request):
+    return render(request, 'game/options.html')
+
+def moviedex(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    list_pokemon = [m for m in game.moviedex.values()]
+    name = list_pokemon[game.slot].title if len(list_pokemon) > 0 else ""
+    return render(request, 'game/moviedex.html', {"moviedex": list_pokemon, 'pos': game.slot + 1, 'name': str(name)})
+
+def moviedex_up(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.slot = max(game.slot - 1, 0)
+    game.dump()
+    list_pokemon = [m for m in game.moviedex.values()]
+    name = list_pokemon[game.slot].title if len(list_pokemon) > 0 else ""
+    return render(request, 'game/moviedex.html', {"moviedex": list_pokemon, 'pos': game.slot + 1, 'name': str(name)})
+
+
+def moviedex_down(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.slot = min(game.slot + 1, len(game.moviemons) - 1)
+    game.dump()
+    list_pokemon = [m for m in game.moviedex.values()]
+    name = list_pokemon[game.slot].title if len(list_pokemon) > 0 else ""
+    return render(request, 'game/moviedex.html', {"moviedex": list_pokemon, 'pos': game.slot + 1, 'name': str(name)})
+
+def details(request, moviemon):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    return render(request, 'game/details.html', {"moviemon": game.moviemons[moviemon]})
 
 def worldmap(request):
     pickle_name = get_pickle_name()
@@ -32,6 +69,8 @@ def down(request):
     game.dump()
     return render(request, 'game/worldmap.html', get_worldmap_params(game))
 
+    game.slot = min(game.slot + 1, )
+
 def left(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
@@ -49,38 +88,36 @@ def right(request):
 def save(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
+    print(moviemon)
     game.dump()
-    return render(request, 'game/save.html', get_save_params(game))
+    return render(request, 'game/save.html', get_save_params(game.slot))
 
 def save_A(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.dump(game.slot)
-    return render(request, 'game/save.html', get_save_params(game))
+    return render(request, 'game/save.html', get_save_params(game.slot))
 
 def save_B(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    return render(request, 'game/options.html', get_options_params(game))
+    game.slot = 0
+    game.dump()
+    return render(request, 'game/options.html')
 
 def save_up(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = max(game.slot - 1, 0)
     game.dump()
-    return render(request, 'game/save.html', get_save_params(game))
+    return render(request, 'game/save.html', get_save_params(game.slot))
 
 def save_down(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = min(game.slot + 1, 2)
     game.dump()
-    return render(request, 'game/save.html', get_save_params(game))
-
-def start(request):
-    return HttpResponse("start")
-def select(request):
-    return HttpResponse("select")
+    return render(request, 'game/save.html', get_save_params(game.slot))
 
 def get_pickle_name():
     pickle_name = getattr(settings, "PICKLE_NAME", None)
@@ -95,7 +132,7 @@ def get_worldmap_params(game):
         'nb_pixel' : str(game.nb_pixel),
     }
 
-def get_save_params(game):
+def get_save_params(slot):
     slots_name = ['a', 'b', 'c']
     slots = {}
     for slot_name in slots_name:
@@ -111,5 +148,5 @@ def get_save_params(game):
                 game = Game.load(elem)
                 slots[slot_name]['dex_number'] = len(game.moviedex)
                 slots[slot_name]['mons_number'] = slots['a']['dex_number'] + len(game.moviemons)
-    slots['pos'] = game.slot
+    slots['pos'] = slot
     return slots
