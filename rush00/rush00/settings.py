@@ -118,6 +118,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+STATIC_ROOT = ''
+
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
@@ -148,3 +150,5 @@ MARIO_X = GRID_SIZE / 2
 MARIO_Y = GRID_SIZE / 2
 
 NB_MOVIEBALLS = 50
+
+SAVE_DIR = os.path.join(BASE_DIR, 'saved_game')

@@ -1,0 +1,57 @@
+{% extends "game/base.html"  %}
+{% load static %}
+
+{% block style %}
+	 .case{
+		position: absolute;
+		left: 287px;
+		top: 52px;
+		width: 448px;
+		height: 448px;
+	}
+{% endblock %}
+
+
+{% block title%}
+  	<title>Save</title>
+{% endblock %}
+
+{% block content%}
+<div class='case'>
+	<ul>
+		<li>Slot A :
+		{% if  a %}
+			exist
+		{% else %}
+			free
+		{% endif %}
+		</li>
+
+		<li>Slot B :
+		{% if  a %}
+		{% else %}
+			free
+		{% endif %}
+		</li>
+
+		<li>Slot C :
+		{% if  a %}
+		{% else %}
+			free
+		{% endif %}
+		</li>
+	<ul>
+</div>
+{% endblock %}
+
+{% block map %}
+	<area shape="circle" coords="639,619,25" href="{% url "save_A" %}" alt="A">
+	<area shape="circle" coords="576,652,25" href="{% url "save_B" %}" alt="B">
+
+	<area shape="rect" coords="364,595,394,628" href="{% url "save_up" %}" alt="up">
+	<area shape="rect" coords="364,652,394,688" href="{% url "save_down" %}" alt="down">
+
+{% endblock %}
+
+  </body>
+</html>

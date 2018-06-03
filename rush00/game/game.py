@@ -28,6 +28,7 @@ class Game:
         self.mario_x = self.grid_size / 2
         self.mario_y = self.grid_size / 2
         self.nb_movieballs = 50
+        self.slot = 0
 
     def __str__(self):
         ret = ""
@@ -56,10 +57,13 @@ class Game:
             else:
                 self.moviemons[infos_json['Title']] = Moviemon(infos_json)
 
-    def dump(self):
-        pickle_name = getattr(settings, "PICKLE_NAME", None)
-        if pickle_name is None:
-            pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
+    def dump(self, nb=-1):
+        if nb == -1 :
+            pickle_name = getattr(settings, "PICKLE_NAME", None)
+            if pickle_name is None:
+                pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
+        else:
+            picle_name = 'slot'+ str(chr(nb + 97)) + '_' + str(self.get_strength()) + '.mmg'
         with open(pickle_name, 'wb') as fd:
             tmp = self.__dict__
             to_dump = {}

@@ -46,26 +46,36 @@ def right(request):
     game.dump()
     return render(request, 'game/worldmap.html', get_worldmap_params(game))
 
-def start(request):
-    return HttpResponse("start")
-def select(request):
-    return HttpResponse("select")
-
-def get_pickle_name():
-    pickle_name = getattr(settings, "PICKLE_NAME", None)
-    if pickle_name is None:
-        pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
-    return pickle_name
-
-"""
-def get_worldmap_params(game):
-    return {
+def save(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    game.mario_x = min(game.grid_size - 1, game.mario_x + 1)
     game.dump()
-    return render(request, 'game/worldmap.html', get_worldmap_params(game))
-"""
+    return render(request, 'game/save.html', get_save_params(game))
+
+def save_A(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.dump(game.slot)
+    return render(request, 'game/save.html', get_save_params(game))
+
+def save_B(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    return render(request, 'game/options.html', get_options_params(game))
+
+def save_up(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.slot = max(game.slot - 1, 0)
+    game.dump()
+    return render(request, 'game/save.html', get_save_params(game))
+
+def save_down(request):
+    pickle_name = get_pickle_name()
+    game = Game.load(pickle_name)
+    game.slot = min(game.slot + 1, 2)
+    game.dump()
+    return render(request, 'game/save.html', get_save_params(game))
 
 def start(request):
     return HttpResponse("start")
@@ -84,3 +94,22 @@ def get_worldmap_params(game):
         'mario_px_y' : str(game.mario_y * game.nb_pixel),
         'nb_pixel' : str(game.nb_pixel),
     }
+
+def get_save_params(game):
+    slots_name = ['a', 'b', 'c']
+    slots = {}
+    for slot_name in slots_name:
+        slots[slot_name] = {}
+    slots['a']
+    save_dir = getattr(settings, 'SAVE_DIR', os.path.join(settings.BASE_DIR, 'saved_game'))
+    if not os.path.exists(save_dir):
+        os.mkdir(save_dir)
+    files = [os.path.join(save_dir, elem) for elem in os.listdir(save_dir) if os.path.isfile(os.path.join(save_dir, elem))]
+    for elem in files:
+        for slot_name in slots_name:
+            if 'slot' + slot_name in elem:
+                game = Game.load(elem)
+                slots[slot_name]['dex_number'] = len(game.moviedex)
+                slots[slot_name]['mons_number'] = slots['a']['dex_number'] + len(game.moviemons)
+    slots['pos'] = game.slot
+    return slots
