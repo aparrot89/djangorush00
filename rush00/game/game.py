@@ -30,6 +30,7 @@ class Game:
         self.nb_movieballs = 50
         self.slot = 0
         self.loader = False
+        self.has_moved = False
 
     def __str__(self):
         ret = ""
@@ -77,6 +78,7 @@ class Game:
             to_dump['nb_movieballs'] = tmp['nb_movieballs']
             to_dump['slot'] = tmp['slot']
             to_dump['loader'] = tmp['loader']
+            to_dump['has_moved'] = tmp['has_moved']
             pickle.dump(to_dump, fd)
 
     def get_random_movie(self):
@@ -112,6 +114,7 @@ class Game:
         game.nb_movieballs = game_dict['nb_movieballs']
         game.slot = game_dict['slot']
         game.loader = game_dict['loader']
+        game.has_moved = game_dict['has_moved']
         return game
 
     @staticmethod

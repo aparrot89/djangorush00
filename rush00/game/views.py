@@ -1,5 +1,5 @@
 import os, pickle, random
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.conf import settings
 from .game import Game
 
@@ -56,8 +56,7 @@ def moviedex_up(request):
     game.dump()
     list_pokemon = [m for m in game.moviedex.values()]
     name = list_pokemon[game.slot].title if len(list_pokemon) > 0 else ""
-    return render(request, 'game/moviedex.html', {"moviedex": list_pokemon, 'pos': game.slot + 1, 'name': str(name)})
-
+    return redirect('/moviedex')
 
 def moviedex_down(request):
     pickle_name = get_pickle_name()
@@ -66,7 +65,7 @@ def moviedex_down(request):
     game.dump()
     list_pokemon = [m for m in game.moviedex.values()]
     name = list_pokemon[game.slot].title if len(list_pokemon) > 0 else ""
-    return render(request, 'game/moviedex.html', {"moviedex": list_pokemon, 'pos': game.slot + 1, 'name': str(name)})
+    return redirect('/moviedex')
 
 def details(request, moviemon):
     pickle_name = get_pickle_name()
@@ -81,7 +80,9 @@ def worldmap(request):
         game = Game.load_default_settings()
     game.slot = 0
     game.loader = False
-    has_moved = True
+    has_moved = game.has_moved
+    game.has_moved = False
+    game.dump()
     return render(request, 'game/worldmap.html', get_worldmap_params(game, has_moved))
 
 def load(request):
@@ -101,21 +102,22 @@ def load_A(request):
     game = Game.load(pickle_to_load)
     game.loader = True
     game.dump()
-    return render(request, 'game/load.html', get_load_save_params(game))
+    return redirect('/options/load')
+    #return render(request, 'game/load.html', get_load_save_params(game))
 
 def load_up(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = max(game.slot - 1, 0)
     game.dump()
-    return render(request, 'game/load.html', get_load_save_params(game))
+    return redirect('/options/load')
 
 def load_down(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = min(game.slot + 1, 2)
     game.dump()
-    return render(request, 'game/load.html', get_load_save_params(game))
+    return redirect('/options/load')
 
 def get_pickle_name():
     pickle_name = getattr(settings, "PICKLE_NAME", None)
@@ -126,34 +128,34 @@ def get_pickle_name():
 def up(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    has_moved = True if game.mario_y > 0 else False
+    game.has_moved = True if game.mario_y > 0 else False
     game.mario_y = max(0, game.mario_y - 1)
     game.dump()
-    return render(request, 'game/worldmap.html', get_worldmap_params(game, has_moved))
+    return redirect('/worldmap')
 
 def down(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    has_moved = True if game.mario_y < game.grid_size - 1 else False
+    game.has_moved = True if game.mario_y < game.grid_size - 1 else False
     game.mario_y = min(game.grid_size - 1, game.mario_y + 1)
     game.dump()
-    return render(request, 'game/worldmap.html', get_worldmap_params(game, has_moved))
+    return redirect('/worldmap')
 
 def left(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    has_moved = True if game.mario_x > 0 else False
+    game.has_moved = True if game.mario_x > 0 else False
     game.mario_x = max(0, game.mario_x - 1)
     game.dump()
-    return render(request, 'game/worldmap.html', get_worldmap_params(game, has_moved))
+    return redirect('/worldmap')
 
 def right(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
-    has_moved = True if game.mario_x < game.grid_size - 1 else False
+    game.has_moved = True if game.mario_x < game.grid_size - 1 else False
     game.mario_x = min(game.grid_size - 1, game.mario_x + 1)
     game.dump()
-    return render(request, 'game/worldmap.html', get_worldmap_params(game, has_moved))
+    return redirect('/worldmap')
 
 def save(request):
     pickle_name = get_pickle_name()
@@ -165,28 +167,28 @@ def save_A(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.dump(game.slot)
-    return render(request, 'game/save.html', get_load_save_params(game))
+    return redirect('/options/save_game')
 
 def save_B(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = 0
     game.dump()
-    return render(request, 'game/options.html')
+    return redirect('/options')
 
 def save_up(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = max(game.slot - 1, 0)
     game.dump()
-    return render(request, 'game/save.html', get_load_save_params(game))
+    return redirect('/options/save_game')
 
 def save_down(request):
     pickle_name = get_pickle_name()
     game = Game.load(pickle_name)
     game.slot = min(game.slot + 1, 2)
     game.dump()
-    return render(request, 'game/save.html', get_load_save_params(game))
+    return redirect('/options/save_game')
 
 def get_pickle_name():
     pickle_name = getattr(settings, "PICKLE_NAME", None)
