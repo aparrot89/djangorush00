@@ -9,10 +9,10 @@
 		top: 52px;
 		width: 448px;
 		height: 448px;
-		background: url("{% static 'img/mario.png' %}") 1px 1px ,
+		background: url("{% static 'img/mario.png' %}") {{ mario_px_x }}px {{ mario_px_y }}px,
 					url("{% static 'img/case.png' %}") ;
 		background-repeat: no-repeat, repeat;
-		background-size: {{ size }}px auto;
+		background-size: {{ nb_pixel }}px auto;
 	}
 </style>
 {% endblock %}

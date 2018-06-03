@@ -142,8 +142,9 @@ MOVIEMONS = [
         'pacific-rim',
 ]
 
+GRID_SIZE = 10
 
-MARIO_X = 0
-MARIO_Y = 0
+MARIO_X = GRID_SIZE / 2
+MARIO_Y = GRID_SIZE / 2
 
 NB_MOVIEBALLS = 50

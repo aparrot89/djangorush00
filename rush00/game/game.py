@@ -1,12 +1,15 @@
-import sys, requests, json
+import sys, requests, json, pickle, random
 import omdb
 from django.conf import settings
-import pickle
 
 class Moviemon:
     def __init__(self, infos):
         self.title = infos['Title']
         self.img = infos['Poster']
+        self.director = infos['Director']
+        self.year = infos['Year']
+        self.plot = infos['Plot']
+        self.actors = infos['Actors']
         self.rating = float(infos['imdbRating'])
 
     def __str__(self):
@@ -20,9 +23,17 @@ class Game:
     def __init__(self):
         self.moviemons = {}
         self.moviedex = {}
-        self.mario_x = 0
-        self.mario_y = 0
+        self.nb_pixel = 45
+        self.grid_size = 10
+        self.mario_x = self.grid_size / 2
+        self.mario_y = self.grid_size / 2
         self.nb_movieballs = 50
+
+    def __str__(self):
+        ret = ""
+        for title, movie in self.moviemons.items():
+            ret += str(movie) + '\n'
+        return ret
 
     def omdb_request(self):
         API_KEY = getattr(settings, 'API_KEY', None)
@@ -45,23 +56,6 @@ class Game:
             else:
                 self.moviemons[infos_json['Title']] = Moviemon(infos_json)
 
-    def load(self, game_dict):
-        self.moviemons = game_dict['moviemons']
-        self.moviedex = game_dict['moviedex']
-        self.mario_x = game_dict['mario_x']
-        self.mario_y = game_dict['mario_y']
-        self.nb_movieballs = game_dict['nb_movieballs']
-
-    def load_default_settings(self):
-        self.omdb_request()
-        self.moviedex = {}
-        self.mario_x = getattr(settings, 'MARIO_X', None)
-        self.mario_y = getattr(settings, 'MARIO_Y', None)
-        self.nb_movieballs = getattr(settings, 'NB_MOVIEBALLS', None)
-        if self.mario_x is None or self.mario_y is None or self.nb_movieballs is None:
-            print("Error: MARIO_X or MARIO_Y or NB_MOVIEBALLS is not set in settings.py")
-            exit(1)
-
     def dump(self):
         pickle_name = getattr(settings, "PICKLE_NAME", None)
         if pickle_name is None:
@@ -71,22 +65,61 @@ class Game:
             to_dump = {}
             to_dump['moviemons'] = tmp['moviemons']
             to_dump['moviedex'] = tmp['moviedex']
+            to_dump['nb_pixel'] = tmp['nb_pixel']
+            to_dump['grid_size'] = tmp['grid_size']
             to_dump['mario_x'] = tmp['mario_x']
             to_dump['mario_y'] = tmp['mario_y']
             to_dump['nb_movieballs'] = tmp['nb_movieballs']
             pickle.dump(to_dump, fd)
 
-    def __str__(self):
-        ret = ""
-        for title, movie in self.moviemons.items():
-            ret += str(movie) + '\n'
-        return ret
 
-def main():
-    game = Game()
-    game.omdb_request()
-    print(game, end="")
+    def get_random_movie(self):
+        key = random.choice(list(self.moviemons.keys()))
+        return self.moviemons[key]
+
+    def get_strength(self):
+        return len(self.moviedex)
+
+    def get_movie(self, moviemon):
+        if moviemon in self.moviemons.keys():
+            return self.moviemons[moviemon].__dict__
+        elif moviemon in self.moviedex.keys():
+            return self.moviedex[moviemon].__dict__
+        else:
+            return None
+
+    @staticmethod
+    def load(pickle_name):
+        with open(pickle_name, 'rb') as fd:
+            game_dict = pickle.load(fd)
+        game = Game()
+        game.moviemons = game_dict['moviemons']
+        game.moviedex = game_dict['moviedex']
+        game.nb_pixel = game_dict['nb_pixel']
+        game.grid_size = game_dict['grid_size']
+        game.mario_x = game_dict['mario_x']
+        game.mario_y = game_dict['mario_y']
+        game.nb_movieballs = game_dict['nb_movieballs']
+        return game
+
+    @staticmethod
+    def load_default_settings():
+        game = Game()
+        game.omdb_request()
+        game.moviedex = {}
+        game.grid_size = getattr(settings, 'GRID_SIZE', None)
+        if game.grid_size is None:
+            game.grid_size = 10
+        game.size = 450 / game.grid_size
+        game.mario_x = getattr(settings, 'MARIO_X', None)
+        if game.mario_x is None:
+            game.mario_x = game.grid_size / 2
+        game.mario_y = getattr(settings, 'MARIO_Y', None)
+        if game.mario_y is None:
+            game.mario_y = game.grid_size / 2
+        game.nb_movieballs = getattr(settings, 'NB_MOVIEBALLS', None)
+        if game.nb_movieballs is None:
+            game.nb_movieballs = 50
+        return game
 
 
-if __name__ == '__main__':
-    main()
