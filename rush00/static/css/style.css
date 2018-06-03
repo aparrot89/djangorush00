@@ -18,6 +18,6 @@
 	left: 287px;
 	top: 500px;
 	width: 448px;
-	height: 45px;
+	height: 55px;
 	background: url("{% static 'img/gray_screen.jpg' %}") repeat;
 }

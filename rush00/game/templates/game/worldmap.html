@@ -15,14 +15,25 @@
 	}
 {% endblock %}
 
-
 {% block title%}
   	<title>Worldmap</title>
 {% endblock %}
 
-{% block map %}
-	<area shape="circle" coords="639,619,25" href="{% url "worldmap" %}" alt="A">
+{% block control%}
+You have {{nb_movieballs}} movieballs <br>
+{% ifequal action 'movieball' %}
+You find a movieball
+{% endifequal %}
+{% ifequal action 'moviemon' %}
+You find a moviemon <br>
+A - Try to catch in movieball
+{% endifequal %}
+{% endblock %}
 
+{% block map %}
+	{% ifequal action 'moviemon' %}
+		<area shape="circle" coords="639,619,25" href="{% url "battle" moviemon_name %}" alt="A">
+	{% endifequal %}
 	<area shape="rect" coords="364,595,394,628" href="{% url "up" %}" alt="up">
 	<area shape="rect" coords="364,652,394,688" href="{% url "down" %}" alt="down">
 	<area shape="rect" coords="334,625,364,658" href="{% url "left" %}" alt="left">

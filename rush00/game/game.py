@@ -57,24 +57,7 @@ class Game:
                 print('Error: ', infos_json['Error'])
             else:
                 self.moviemons[infos_json['Title']] = Moviemon(infos_json)
-    """
-    def dump(self, nb=-1):
-        if nb == -1 :
-            pickle_name = getattr(settings, "PICKLE_NAME", None)
-            if pickle_name is None:
-                pickle_name = os.path.join(settings.BASE_DIR, 'infos.pickle')
-        omdb.set_default('apikey', API_KEY)
-        for movie in moviemons:
-            wp_call = omdb.request(t=movie)
-            if wp_call.status_code != 200:
-                print("Erreur HTTP, code ", str(wp_call.status_code))
-                exit(1)
-            infos_json = wp_call.json()
-            if infos_json and 'Error' in infos_json.keys():
-                print('Error: ', infos_json['Error'])
-            else:
-                self.moviemons[infos_json['Title']] = Moviemon(infos_json)
-    """
+
     def dump(self, nb=-1):
         if nb == -1 :
             pickle_name = getattr(settings, "PICKLE_NAME", None)
@@ -95,7 +78,6 @@ class Game:
             to_dump['slot'] = tmp['slot']
             to_dump['loader'] = tmp['loader']
             pickle.dump(to_dump, fd)
-
 
     def get_random_movie(self):
         key = random.choice(list(self.moviemons.keys()))

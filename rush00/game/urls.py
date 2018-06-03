@@ -23,4 +23,6 @@ urlpatterns = [
     path('moviedex_up/', views.moviedex_up, name="moviedex_up"),
     path('moviedex_down/', views.moviedex_down, name="moviedex_down"),
     path('moviedex/<str:moviemon>/', views.details, name="details"),
+    path('battle/<str:moviemon>/', views.battle, name="battle"),
+    path('battle_A/<str:moviemon>/', views.battle_A, name="battle_A"),
 ]
