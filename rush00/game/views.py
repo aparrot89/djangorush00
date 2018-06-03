@@ -5,7 +5,9 @@ from .game import Game
 
 def init(request):
     pickle_name = get_pickle_name()
+    print(pickle_name)
     if os.path.exists(pickle_name):
+        print("coucou")
         os.remove(pickle_name)
     return render(request, 'game/base.html')
 
@@ -28,12 +30,13 @@ def battle_A(request, moviemon):
     game.nb_movieballs -= 1
     moviemon = game.moviemons[moviemon]
     C = float(min(90., max(1., 50. - (moviemon.rating * 10.) + (game.get_strength() * 5.))))
-    print("C", C)
     is_catched =  random.choices([False, True], [1. - C / 100., C / 100.])[0]
-    print("is_catched", is_catched)
     if is_catched:
         game.moviedex[moviemon.title] = moviemon
         del game.moviemons[moviemon.title]
+        if len(game.moviemons) == 0:
+            os.remove(pickle_name)
+            return render(request, 'game/init.html')
     A_actif = True if (not is_catched and game.nb_movieballs > 0) else False
     game.dump()
     return render(request, 'game/battle.html', {"moviemon": moviemon,
